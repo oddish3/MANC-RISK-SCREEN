@@ -25,3 +25,14 @@ Below are some key notes about the model for new users:
 3) DES models create natural variation in the outcomes and so require a large population to be sampled in the model to achieve stable results. Currently we recommend that users simulate results for at least 7 million women, particularly for the more variable risk-stratified strategies. We are investigating variance reduction techniques to reduce this number.
 4) Given the large number of required model runs, the model splits the total sample into 10 sub-samples. If the model is interrupted mid-run then the results from some of these sub-samples may be retrieved to save running the whole sample again
 5) Key data in this model include a sample of ~15,000 women's Volpara breast density estimates, estimated 10 year risk of breast cancer, and estimated lifetime risk of breast cancer. This data was based on real data from the PROCAS 2 study. In order to create a model version which could widely be shared while being sensitive to data protection concerns, the researchers created a synthetic dataset of these variables basedon the original data. This used the synthpop package in R which maintains the original structure of the data. 
+
+## Path management plan (here package)
+
+The current scripts use `setwd()` and relative paths (for example, `Data/` and `Deterministic results/`). This works in RStudio but makes it harder to run the model from other working directories. We recommend refactoring to use `here::here()` so paths resolve from the repository root regardless of where the scripts are executed.
+
+Proposed refactor steps:
+1) Add `here` to the required packages list (install when needed).
+2) Define a base path once per script, e.g. `project_root <- here::here()` and `model_root <- file.path(project_root, "Model Core Files", "mancriskscreen")`.
+3) Replace `setwd()` calls with explicit path usage, using `file.path(model_root, ...)` or `here::here(...)` for data, inputs, and outputs.
+4) Apply the same path pattern to `Analysis/` and `Profiling/` scripts so outputs are written to the same folders as today.
+5) Validate by running a short deterministic run to confirm that files are still read/written in the expected locations.
